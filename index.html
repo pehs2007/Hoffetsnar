@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title>Hoffets Nar</title>
+  <style>
+    @font-face {
+      font-family: 'Boost';
+      src: url('fonts/PLEEEAAASE.otf');
+    }
+    body {
+      background: rgb(255, 189, 200) url(Polka_dots.svg) repeat fixed center;
+    }
+    .titel {
+      font-family: 'Boost';
+    }
+    body { font-family: Arial, serif; padding: 20px; max-width: 600px; margin: auto; }
+    #spil, #afstemningSektion { display: none; }
+    .skjult { display: none; }
+  </style>
+</head>
+
+<body>
+  <div class="titel"> 
+    <h1>Hoffets Nar_</h1>
+  </div>
+
+  <a href="Regler.html">
+    <button>Regler</button>
+  </a>
+
+  <p>   </p>
+
+  <div id="opsætning">
+    <label>Spillernes navne (adskil med komma):</label><br>
+    <input type="text" id="spillernavne" placeholder="Peter,Rasmus,Villy">
+    <button onclick="startSpil()">Start spillet</button>
+  </div>
+
+  <div id="spil">
+    <h2 id="nuværendeSpiller"></h2>
+    <p id="sætning"></p>
+    <p id="nedtælling"></p>
+    <button id="startAfstemningKnap" class="skjult" onclick="startAfstemning()">Start afstemning</button>
+  </div>
+
+  <div id="afstemningSektion">
+    <h3>Afstemningsrunde. Hvor god en nar var <span id="afstemSpillerNavn">?</span></h3>
+    <label>(0-5):</label>
+    <input type="number" id="afstemInput" min="0" max="5">
+    <button onclick="indsamlingAfstemning()">Indsend stemme</button>
+  </div>
+
+  <h3>Point</h3>
+  <ul id="pointListe"></ul>
+
+  <script>
+    // Sætninger til spillet
+    const sætninger = [
+      "Kys dine fødder",
+      "Ring til din mor og sig at du har en særlig tiltrækning til furries",
+      "Byt tøj med den nærmeste af modsat køn",
+      "DRIK COLA!!!! HURTIGT",
+      "Drik et glas vand",
+      "Gå ned på kontoret, og sig at du har ondt i numsen fordi du pruttede på komando",
+      "Parker på handicap parkerings pladsen",
+      "Prank call din bedste mor og sig at du har en særlig tiltrækning furries",
+      "Kald din mor for hendes fornavn ekslusivt",
+      "List så mange Pokemonener du kender. For hver pokemon du nævner må du slå en medspiller",
+      "Post Jeg er begyndt at samle på mine tånegle på din story lad det stå i 10 minutter.",
+      "Send en besked til en lærer eller chef: Hvordan går det egentlig med dit kærlighedsliv?",
+      "Spis noget med lukkede øjne, som en anden vælger for dig. Du må ikke spørge hvad det er.",
+      "Ring til din eks og sig, du har fundet hans/hendes sok derhjemme. spørg om de vil have den tilbage.",
+      "Tag et billede af dine tæer og læg det op på din story",
+      "Sæt Barbie Girl på højt volumen og lav en catwalk i rummet, mens du danser dramatisk.",
+      "Skriv jeg har set sandheden i et spejl til en tilfældig kontakt i din telefon.",
+      "Tag din telefon og sig Siri, hvordan slipper jeg af med en ligsæk? højt, som om du virkelig mener det.",
+      "Tag et stykke tøj af hver spiller og byg en outfit du skal have på resten af spillet.",
+      "Ring til en pizzamand og spørg: Hvad er jeres mest erotiske pizza?",
+      "Gå op til spejlet, stir ind i det og gentag Jeg er en sexet kartoffel i 10 sekunder.",
+      "Klap dig selv i ansigtet og sig: Det er tid til at vågne op, Karen. uanset hvad du hedder.",
+      "Byt Instagram-profilbillede med en dårlig selfie.",
+      "Læs dit seneste Google-søgning højt, uden censur.",
+      "Genskab din værste teenage Facebook-status som om det er spoken word poesi.",
+      "Sæt dig på gulvet, og lav hund der tigger-lyde, indtil nogen i rummet siger nej, tak.",
+      "Send “jeg drømte om dig i nat” til en lærer, chef eller familiemedlem.",
+      "Ring til din mor og spørg om det er normalt at have hår på ballerne (uanset køn).",
+      "Genskab den sidste gang du græd med skuespil, lyd og følelser.",
+      "Lad en anden skrive en Tinder-bio til dig, og post den i en story.",
+      "Imiter en kendt person mens du prøver at score en i rummet.",
+      "Tag en selfie med dit dobbelt-hage “fra helvede” og send til en gammel klassekammerat.",
+      "Tag sokkerne på hænderne og lad dem diskutere dit kærlighedsliv foran gruppen.",
+      "Prøv at flirte med et møbel i rummet som om det er dit største crush.",
+    ];
+    // Spillere og point
+    let spillere = [];
+    let point = {};
+    let nuværendeSpillerIndex = 0;
+    let nedtællingInterval;
+    let tidTilbage = 30;
+
+    // Start spillet
+    function startSpil() {
+      const input = document.getElementById('spillernavne').value;
+      spillere = input.split(',').map(navn => navn.trim()).filter(navn => navn);
+      if (spillere.length < 2) return alert("Mindst 2 spillere er nødvendige.");
+
+      spillere.forEach(s => point[s] = 0);
+      document.getElementById('opsætning').style.display = 'none';
+      document.getElementById('spil').style.display = 'block';
+      opdaterPoint();
+      næsteTur();
+    }
+
+    // Næste tur
+    function næsteTur() {
+      document.getElementById('afstemningSektion').style.display = 'none';
+      const spiller = spillere[nuværendeSpillerIndex];
+      const sætning = sætninger[Math.floor(sætninger.length*Math.random())];
+
+      document.getElementById('nuværendeSpiller').innerText = `${spiller}s tur`;
+      document.getElementById('sætning').innerText = sætning;
+      document.getElementById('startAfstemningKnap').classList.add('skjult');
+      tidTilbage = 25;
+      document.getElementById('nedtælling').innerText = `Tid: ${tidTilbage}s`;
+
+      nedtællingInterval = setInterval(() => {
+        tidTilbage--;
+        document.getElementById('nedtælling').innerText = `Tid: ${tidTilbage}s`;
+        if (tidTilbage <= 0) {
+          clearInterval(nedtællingInterval);
+          document.getElementById('startAfstemningKnap').classList.remove('skjult');
+        }
+      }, 1000);
+    }
+
+    // Start afstemning
+    function startAfstemning() {
+      const spiller = spillere[nuværendeSpillerIndex];
+      document.getElementById('afstemSpillerNavn').innerText = spiller;
+      document.getElementById('afstemInput').value = '';
+      document.getElementById('afstemningSektion').style.display = 'block';
+    }
+
+    // Indsamling af stemme
+    function indsamlingAfstemning() {
+      const stemme = parseInt(document.getElementById('afstemInput').value);
+      if (isNaN(stemme) || stemme < 0 || stemme > 5) return alert("Indtast et gyldigt tal mellem 0 og 5.");
+
+      const spiller = spillere[nuværendeSpillerIndex];
+      point[spiller] += stemme;
+      opdaterPoint();
+
+      if (point[spiller] >= 10) {
+        alert(`${spiller} var den største nar med ${point[spiller]} point!`);
+        location.reload();
+        return;
+      }
+      nuværendeSpillerIndex = (nuværendeSpillerIndex + 1) % spillere.length;
+      næsteTur();
+    }
+
+    // Opdater point
+    function opdaterPoint() {
+      const pointListe = document.getElementById('pointListe');
+      pointListe.innerHTML = '';
+      spillere.forEach(s => {
+        const li = document.createElement('li');
+        li.textContent = `${s}: ${point[s]} point`;
+        pointListe.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
