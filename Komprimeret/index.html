@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title>Hoffet Nar</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    #game, #voteSection {
+      display: none;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1311235621598690"
+     crossorigin="anonymous"></script>
+<!-- Hoffets_Nar -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1311235621598690"
+     data-ad-slot="7452139014"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  <div>
+    <h1>Hoffets Nar_</h1>
+  </div>
+  <a href="Regler.html">
+    <button>Regler</button>
+  </a>
+  <div id="setup">
+    <label>Spillernes Navne (Komma adskiller navne):</label><br>
+    <input id="playerNames" placeholder="Peter,Rasmus,Villy">
+    <button onclick="S()">Start Spillet</button>
+  </div>
+  <div id="game">
+    <h2 id="currentPlayer"></h2>
+    <p id="sentence"></p>
+    <p id="timer"></p>
+    <button id="startVotingBtn" class="hidden" onclick="V()">Start Votering</button>
+  </div>
+  <div id="voteSection">
+    <h3>Stemme runde. Hvor god en nar var <span id="votePlayerName">?</span></h3>
+    <label>(0-5):</label>
+    <input type="number" id="voteInput" min="0" max="5">
+    <button onclick="T()">Insaml votering</button>
+  </div>
+  <h3>Stemmer</h3>
+  <ul id="scoreList"></ul>
+  <script>
+    const s = [
+      "Kys dine føder",
+      "Ring til din mor og sig at du ahr en særlig tiltrækning til furries",
+      "Byt tøj med den nærmeste af modsat køn",
+      "DRIK COLA!!!! HURTIGT",
+      "Drik et glas vand",
+      "Gå ned på kontoret, og sig at du har ondt i numsen fordi du pruttede på komando",
+      "Parker på handicap parkerings pladsen",
+      "Prank call din bedste mor og sig at du har en særlig tiltrækning furries",
+      "Kald din mor for hendes fornavn ekslusivt",
+      "List så mange Pokemonener du kender. For hver pokemon du nævner må du slå en medspiller",
+      "Post Jeg er begyndt at samle på mine tånegle på din story lad det stå i 10 minutter.",
+      "Send en besked til en lærer eller chef: Hvordan går det egentlig med dit kærlighedsliv?",
+      "Spis noget med lukkede øjne, som en anden vælger for dig. Du må ikke spørge hvad det er.",
+      "Ring til din eks og sig, du har fundet hans/hendes sok derhjemme. spørg om de vil have den tilbage.",
+      "Tag et billede af dine tæer og læg det op på din story",
+      "Sæt Barbie Girl på højt volumen og lav en catwalk i rummet, mens du danser dramatisk.",
+      "Skriv jeg har set sandheden i et spejl til en tilfældig kontakt i din telefon.",
+      "Tag din telefon og sig Siri, hvordan slipper jeg af med en ligsæk? højt, som om du virkelig mener det.",
+      "Tag et stykke tøj af hver spiller og byg en outfit du skal have på resten af spillet.",
+      "Ring til en pizzamand og spørg: Hvad er jeres mest erotiske pizza?",
+      "Gå op til spejlet, stir ind i det og gentag Jeg er en sexet kartoffel i 10 sekunder.",
+      "Klap dig selv i ansigtet og sig: Det er tid til at vågne op, Karen. uanset hvad du hedder.",
+      "Byt Instagram-profilbillede med en dårlig selfie.",
+      "Læs dit seneste Google-søgning højt, uden censur.",
+      "Genskab din værste teenage Facebook-status som om det er spoken word poesi.",
+      "Sæt dig på gulvet, og lav hund der tigger-lyde, indtil nogen i rummet siger nej, tak.",
+      "Send “jeg drømte om dig i nat” til en lærer, chef eller familiemedlem.",
+      "Ring til din mor og spørg om det er normalt at have hår på ballerne (uanset køn).",
+      "Genskab den sidste gang du græd med skuespil, lyd og følelser.",
+      "Lad en anden skrive en Tinder-bio til dig, og post den i en story.",
+      "Imiter en kendt person mens du prøver at score en i rummet.",
+      "Tag en selfie med dit dobbelt-hage “fra helvede” og send til en gammel klassekammerat.",
+      "Tag sokkerne på hænderne og lad dem diskutere dit kærlighedsliv foran gruppen.",
+      "Prøv at flirte med et møbel i rummet som om det er dit største crush."
+    ];
+    let p = [], c = {}, i = 0, t, h = 30;
+    function S() {
+      p = document.getElementById('playerNames').value.split(',').map(e => e.trim()).filter(e => e);
+      if (p.length < 2) return alert("Mindst 2 spillere er nødvendig.");
+      p.forEach(e => c[e] = 0);
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      U();
+      N();
+    }
+    function N() {
+      document.getElementById('voteSection').style.display = 'none';
+      let n = p[i], x = s[Math.random() * s.length | 0];
+      document.getElementById('currentPlayer').innerText = n + "s tur";
+      document.getElementById('sentence').innerText = x;
+      document.getElementById('startVotingBtn').classList.add('hidden');
+      h = 25;
+      document.getElementById('timer').innerText = "Tid: " + h + "s";
+      clearInterval(t);
+      t = setInterval(_ => {
+        h--;
+        document.getElementById('timer').innerText = "tid: " + h + "s";
+        if (h <= 0) {
+          clearInterval(t);
+          document.getElementById('startVotingBtn').classList.remove('hidden');
+        }
+      }, 1e3);
+    }
+    function V() {
+      let n = p[i];
+      document.getElementById('votePlayerName').innerText = n;
+      document.getElementById('voteInput').value = '';
+      document.getElementById('voteSection').style.display = 'block';
+    }
+    function T() {
+      let v = +document.getElementById('voteInput').value;
+      if (isNaN(v) || v < 0 || v > 5) return alert("EN RIGTIG STEMMME, IDIOT");
+      let n = p[i];
+      c[n] += v;
+      U();
+      if (c[n] >= 10) {
+        alert(n + " Var den største nar med " + c[n] + " Point!");
+        location.reload();
+        return;
+      }
+      i = (i + 1) % p.length;
+      N();
+    }
+    function U() {
+      let l = document.getElementById('scoreList');
+      l.innerHTML = '';
+      p.forEach(e => {
+        let li = document.createElement('li');
+        li.textContent = e + ": " + c[e] + " Point!";
+        l.appendChild(li);
+      });
+    }
+  </script>
+  
+</body>
+</html>
